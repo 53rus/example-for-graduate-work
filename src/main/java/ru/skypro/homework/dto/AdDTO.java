@@ -19,7 +19,7 @@ public class AdDTO {
     /**
      * Цена объявления
      */
-    private int price;
+    private Integer price;
     /**
      * Заголовок объявления
      */
