@@ -10,7 +10,7 @@ import javax.persistence.Enumerated;
 @Data
 @NoArgsConstructor
 @Entity
-public class User {
+public class User{
 
     private Integer id;
 
