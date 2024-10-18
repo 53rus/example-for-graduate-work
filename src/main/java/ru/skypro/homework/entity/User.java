@@ -4,14 +4,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.skypro.homework.dto.Role;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
+
 @Data
 @NoArgsConstructor
 @Entity
-public class User{
-
+@Table(name = "users")
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String email;
@@ -23,5 +24,8 @@ public class User{
 
     @Enumerated(EnumType.STRING)
     private Role role;
+    @Column(name = "user_avatar")
     private String image;
+    @Lob
+    private byte[] data;
 }
