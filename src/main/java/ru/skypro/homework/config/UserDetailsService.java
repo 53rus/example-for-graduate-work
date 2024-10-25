@@ -1,6 +1,6 @@
 package ru.skypro.homework.config;
 
-import exception.InCorrectPasswordException;
+import ru.skypro.homework.exception.InCorrectPasswordException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
