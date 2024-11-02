@@ -15,7 +15,7 @@ public class CommentMapper {
         return comment;
     }
 
-    public static CommentDTO mapCommentDTOToComment(Comment comment) {
+    public static CommentDTO mapCommentToCommentDTO(Comment comment) {
         CommentDTO commentDTO = new CommentDTO();
         commentDTO.setAuthor(comment.getUser().getId());
         commentDTO.setAuthorImage(comment.getUser().getImage());

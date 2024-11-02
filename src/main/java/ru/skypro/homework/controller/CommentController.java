@@ -6,22 +6,27 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.CommentDTO;
 import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
+import ru.skypro.homework.service.AdsService;
 import ru.skypro.homework.service.CommentService;
 
 @Slf4j
 @RestController
+@CrossOrigin(value = "http://localhost:3000")
 @RequestMapping("/ads")
 @RequiredArgsConstructor
 public class CommentController {
 
     private final CommentService commentService;
+    private final AdsService adsService;
 
     @Operation(
             tags = "Комментарии",
@@ -82,8 +87,9 @@ public class CommentController {
     )
     @PostMapping("/{id}/comments")
     public ResponseEntity<CommentDTO> addComment(@PathVariable Integer id,
-                                                 @RequestBody CreateOrUpdateComment comment) {
-        return ResponseEntity.ok(commentService.addComment(id, comment));
+                                                 @RequestBody CreateOrUpdateComment comment,
+                                                 Authentication authentication) {
+        return ResponseEntity.ok(commentService.addComment(id, comment, authentication));
     }
 
     @Operation(
@@ -118,10 +124,10 @@ public class CommentController {
             }
     )
     @DeleteMapping("/{adId}/comments/{commentId}")
-    public ResponseEntity<Void> deleteComment(@PathVariable Integer adId,
-                                              @PathVariable Integer commentId) {
-        commentService.deleteComment(adId, commentId);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> deleteComment(@PathVariable Integer adId,
+                                           @PathVariable Integer commentId,
+                                           Authentication authentication) {
+        return ResponseEntity.status(commentService.deleteComment(adId, commentId, authentication)).build();
     }
 
     @Operation(
@@ -159,7 +165,8 @@ public class CommentController {
     @PatchMapping("{adId}/comments/{commentId}")
     public ResponseEntity<CommentDTO> updateComment(@PathVariable Integer adId,
                                                     @PathVariable Integer commentsId,
-                                                    @RequestBody CreateOrUpdateComment comment) {
-        return ResponseEntity.ok(commentService.updateComment(adId, commentsId, comment));
+                                                    @RequestBody CreateOrUpdateComment updateComment,
+                                                    Authentication authentication){
+        return commentService.updateComment(adId, commentsId, updateComment, authentication);
     }
 }

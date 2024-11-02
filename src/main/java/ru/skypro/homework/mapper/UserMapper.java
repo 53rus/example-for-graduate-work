@@ -84,4 +84,13 @@ public class UserMapper {
         user.setPhone(userDTO.getPhone());
         return user;
     }
+
+    public static UpdateUser mapUserToUpdateUser(User user) {
+        UpdateUser updateUser = new UpdateUser();
+        updateUser.setFirstName(user.getFirstName());
+        updateUser.setLastName(user.getLastName());
+        updateUser.setPhone(user.getPhone());
+        return updateUser;
+
+    }
 }

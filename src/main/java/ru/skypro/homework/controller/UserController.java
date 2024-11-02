@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.UpdateUser;
@@ -19,6 +20,7 @@ import ru.skypro.homework.entity.User;
 import ru.skypro.homework.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
@@ -128,8 +130,12 @@ public class UserController {
     @PatchMapping("/me")
     public ResponseEntity<UpdateUser> updateUser(@RequestBody UpdateUser updateUser,
                                                  Authentication authentication) {
-        UpdateUser user = userService.updateUser(updateUser, authentication);
-        return ResponseEntity.status(HttpStatus.OK).body(user);
+        if (authentication.getName() != null) {
+            UpdateUser user = userService.updateUser(updateUser, authentication);
+            return ResponseEntity.status(HttpStatus.OK).body(user);
+        }else{
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
 
@@ -155,10 +161,13 @@ public class UserController {
             }
     )
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<byte[]> updateUserImage(@RequestParam MultipartFile image) {
-        return ResponseEntity.ok().body(userService.updateUserImage(image));
-
+    public ResponseEntity<Void> updateUserImage(@RequestParam MultipartFile image,
+                                                  Authentication authentication) throws IOException {
+        try {
+            userService.updateUserImage(image, authentication);
+            return ResponseEntity.ok().build();
+        } catch (HttpClientErrorException.Unauthorized e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
-
-
 }

@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.entity.Ad;
@@ -22,7 +24,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Server
+@Service
 @RequiredArgsConstructor
 @Slf4j
 public class AdsServiceImp implements AdsService {
@@ -77,7 +79,7 @@ public class AdsServiceImp implements AdsService {
 
     @Override
     public ExtendedAd getAds(Integer id) {
-        Ad ad = adRepository.findByPk(id);
+        Ad ad = adRepository.findByPk(id).orElseThrow(AdAdNotFoundException::new);;
         if (ad != null) {
             return AdMapper.mapAdToExtendedAd(ad);
         }
@@ -92,11 +94,12 @@ public class AdsServiceImp implements AdsService {
      * @return статус выполнения
      */
     @Override
+    @Transactional
     public HttpStatus deleteAd(Integer id,
                                Authentication authentication) {
         try {
             User user = userService.getUser(authentication.getName());
-            Ad ad = adRepository.findByPk(id);
+            Ad ad = adRepository.findByPk(id).orElseThrow(AdAdNotFoundException::new);;
 
             Role role = user.getRole();
             boolean isAuthorAd = (ad.getUser().equals(user));
@@ -129,7 +132,7 @@ public class AdsServiceImp implements AdsService {
                                           CreateOrUpdateAd ad,
                                           Authentication authentication) {
 
-        Ad foundedAd = adRepository.findByPk(id);
+        Ad foundedAd = adRepository.findByPk(id).orElseThrow(AdAdNotFoundException::new);
         User user = userService.getUser(authentication.getName());
 
         Role role = user.getRole();
@@ -204,6 +207,6 @@ public class AdsServiceImp implements AdsService {
      */
     @Override
     public byte[] getImage(Integer imageId) throws IOException {
-        return adRepository.findByPk(imageId).getData();
+        return adRepository.findByPk(imageId).get().getData();
     }
 }

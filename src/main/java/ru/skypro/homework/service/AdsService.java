@@ -11,7 +11,6 @@ import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.dto.ExtendedAd;
 
 import java.io.IOException;
-import java.util.List;
 
 public interface AdsService {
     Ads getAllAds();
@@ -27,7 +26,7 @@ public interface AdsService {
 
     Ads getAdsMe(Authentication authentication);
 
-   ResponseEntity<byte[]>updateImage(Integer id, MultipartFile image, Authentication authentication) throws IOException;
+    ResponseEntity<byte[]> updateImage(Integer id, MultipartFile image, Authentication authentication) throws IOException;
 
     byte[] getImage(Integer imageId) throws IOException;
 
