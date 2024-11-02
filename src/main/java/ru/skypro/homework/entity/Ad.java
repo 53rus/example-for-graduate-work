@@ -2,6 +2,7 @@ package ru.skypro.homework.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
@@ -22,6 +23,7 @@ public class Ad {
     private String image;
     @Lob
     private byte[] data;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

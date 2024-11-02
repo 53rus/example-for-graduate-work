@@ -6,4 +6,5 @@ import ru.skypro.homework.entity.Ad;
 
 @Repository
 public interface AdRepository extends JpaRepository<Ad,Integer> {
+    Ad findByPk(Integer pk);
 }
