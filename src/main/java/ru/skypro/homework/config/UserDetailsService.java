@@ -29,7 +29,7 @@ public class UserDetailsService implements UserDetailsManager {
         User user = new User();
         user.setEmail(userDetails.getUsername());
         user.setPassword(userDetails.getPassword());
-        user.setRole(Role.valueOf(userDetails.getAuthorities().iterator().next().getAuthority()));
+        user.setRole(Role.valueOf(userDetails.getAuthorities().iterator().next().getAuthority().substring(5)));
         userRepository.save(user);
     }
 

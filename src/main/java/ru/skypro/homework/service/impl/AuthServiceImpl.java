@@ -5,20 +5,22 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
+import ru.skypro.homework.config.UserDetailsService;
 import ru.skypro.homework.dto.Register;
 import ru.skypro.homework.service.AuthService;
 
 @Service
 public class AuthServiceImpl implements AuthService {
 
-    private final UserDetailsManager manager;
+    private final UserDetailsService manager;
     private final PasswordEncoder encoder;
 
-    public AuthServiceImpl(UserDetailsManager manager,
-                           PasswordEncoder passwordEncoder) {
+
+    public AuthServiceImpl(UserDetailsService manager, PasswordEncoder encoder) {
         this.manager = manager;
-        this.encoder = passwordEncoder;
+        this.encoder = encoder;
     }
+
 
     @Override
     public boolean login(String userName, String password) {

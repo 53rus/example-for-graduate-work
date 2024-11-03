@@ -22,7 +22,7 @@ public class UserMapper {
         userDTO.setId(user.getId());
         userDTO.setEmail(user.getEmail());
         userDTO.setFirstName(user.getFirstName());
-        userDTO.setLastName(userDTO.getLastName());
+        userDTO.setLastName(user.getLastName());
         userDTO.setPhone(user.getPhone());
         userDTO.setRole(user.getRole());
         userDTO.setImage(user.getImage());

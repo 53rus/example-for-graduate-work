@@ -65,7 +65,6 @@ public class UserServiceImp implements UserService {
      */
     @Override
     public UserDTO getLogUser(Authentication authentication) {
-
         return UserMapper.mapUserToUserDTO(userRepository.findByEmail(authentication.getName())
                 .orElseThrow(UserNotFoundException::new));
     }

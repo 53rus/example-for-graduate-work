@@ -14,7 +14,7 @@ public class WebSecurityConfig {
 
     private static final String[] AUTH_WHITELIST = {
             "/swagger-resources/**",
-            "/swagger-ui.html",
+            "/swagger-ui/**",
             "/v3/api-docs",
             "/webjars/**",
             "/login",
@@ -23,6 +23,7 @@ public class WebSecurityConfig {
             "/users/me/image",
             "/ads"
     };
+
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
