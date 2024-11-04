@@ -2,6 +2,8 @@ package ru.skypro.homework.dto;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 public class CommentDTO {
     /**
@@ -19,7 +21,7 @@ public class CommentDTO {
     /**
      * Дата и время создания комментария в миллисекундах с 00:00:00 01.01.1970
      */
-    private Long createdAt;
+    private LocalDateTime createdAt;
     /**
      * Id комментария
      */

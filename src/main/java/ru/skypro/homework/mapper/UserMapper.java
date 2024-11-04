@@ -22,7 +22,7 @@ public class UserMapper {
         userDTO.setId(user.getId());
         userDTO.setEmail(user.getEmail());
         userDTO.setFirstName(user.getFirstName());
-        userDTO.setLastName(userDTO.getLastName());
+        userDTO.setLastName(user.getLastName());
         userDTO.setPhone(user.getPhone());
         userDTO.setRole(user.getRole());
         userDTO.setImage(user.getImage());
@@ -83,5 +83,14 @@ public class UserMapper {
         user.setLastName(userDTO.getLastName());
         user.setPhone(userDTO.getPhone());
         return user;
+    }
+
+    public static UpdateUser mapUserToUpdateUser(User user) {
+        UpdateUser updateUser = new UpdateUser();
+        updateUser.setFirstName(user.getFirstName());
+        updateUser.setLastName(user.getLastName());
+        updateUser.setPhone(user.getPhone());
+        return updateUser;
+
     }
 }

@@ -5,26 +5,32 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import lombok.RequiredArgsConstructor;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.service.AdsService;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import java.util.List;
+import javax.validation.Valid;
+import java.io.IOException;
 
 @Slf4j
+@CrossOrigin(value = "http://localhost:3000")
 @RestController
+@SecurityRequirement(name = "javainuseapi")
 @RequestMapping("/ads")
-@RequiredArgsConstructor
 public class AdsController {
 
     private final AdsService adsService;
+
+    public AdsController(AdsService adsService) {
+        this.adsService = adsService;
+    }
 
     @Operation(
             tags = "Объявления",
@@ -42,7 +48,7 @@ public class AdsController {
     )
     @GetMapping
     public ResponseEntity<Ads> getAllAds() {
-        return ResponseEntity.ok().body(adsService.getAllAds());
+        return ResponseEntity.ok(adsService.getAllAds());
     }
 
     @Operation(
@@ -70,9 +76,15 @@ public class AdsController {
             }
     )
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<AdDTO> addAd(@RequestParam MultipartFile image,
-                                       @RequestParam CreateOrUpdateAd properties) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(adsService.addAd(properties, image));
+    public ResponseEntity<AdDTO> addAd(@RequestPart("image") MultipartFile image,
+                                       @RequestPart("properties") @Valid CreateOrUpdateAd createOrUpdateAd,
+                                       Authentication authentication) throws IOException {
+        if (authentication.getName() != null) {
+            adsService.addAd(createOrUpdateAd, image, authentication);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     @Operation(
@@ -102,8 +114,17 @@ public class AdsController {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<ExtendedAd> getAds(@PathVariable Integer id) {
-        return ResponseEntity.ok().body(adsService.getAds(id));
+    public ResponseEntity<ExtendedAd> getAds(@PathVariable ("id") Integer id,
+                                             Authentication authentication) {
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        if (adsService.getAds(id) == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else {
+            return ResponseEntity.ok(adsService.getAds(id));
+        }
+
     }
 
     @Operation(
@@ -138,9 +159,9 @@ public class AdsController {
             }
     )
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAd(@PathVariable Integer id) {
-        adsService.deleteAd(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Void> deleteAd(@PathVariable Integer id,
+                                         Authentication authentication) {
+        return ResponseEntity.status(adsService.deleteAd(id, authentication)).build();
     }
 
     @Operation(
@@ -177,8 +198,9 @@ public class AdsController {
     )
     @PatchMapping("/{id}")
     public ResponseEntity<AdDTO> updateAds(@PathVariable Integer id,
-                                           @RequestBody CreateOrUpdateAd ad) {
-        return ResponseEntity.ok().body(adsService.updateAd(id, ad));
+                                           @RequestBody CreateOrUpdateAd ad,
+                                           Authentication authentication) {
+        return adsService.updateAd(id, ad, authentication);
     }
 
     @Operation(
@@ -201,9 +223,13 @@ public class AdsController {
                     )
             }
     )
-    @GetMapping("/me")
-    public ResponseEntity<Ads> getAdsMe() {
-       return ResponseEntity.ok().body(adsService.getAdsMe());
+    @GetMapping(value = "/me", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Ads> getAdsMe(Authentication authentication) {
+        if (authentication.getName() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } else {
+            return ResponseEntity.ok(adsService.getAdsMe(authentication));
+        }
     }
 
     @Operation(
@@ -240,7 +266,10 @@ public class AdsController {
     )
     @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> updateImage(@PathVariable Integer id,
-                                      @RequestParam MultipartFile image) {
-        return ResponseEntity.ok().body(adsService.updateImage(id, image));
+                                              @RequestParam MultipartFile image,
+                                              Authentication authentication) throws IOException {
+
+
+        return adsService.updateImage(id, image, authentication);
     }
 }

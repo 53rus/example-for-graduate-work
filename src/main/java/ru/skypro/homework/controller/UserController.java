@@ -4,19 +4,28 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.UserDTO;
 import ru.skypro.homework.service.UserService;
 
+import javax.validation.Valid;
+import java.io.IOException;
+
 @Slf4j
+@CrossOrigin(value = "http://localhost:3000")
 @RestController
+@SecurityRequirement(name = "javainuseapi")
 @RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {
@@ -56,9 +65,11 @@ public class UserController {
             }
     )
     @PostMapping("/set_password")
-    public ResponseEntity<NewPassword> setPassword(@RequestBody NewPassword newPassword) {
-        userService.setPassword(newPassword);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> setPassword(@RequestBody @Valid NewPassword newPassword,
+                                      Authentication authentication) {
+        log.info("New password : {}", newPassword);
+        return userService.setPassword(newPassword, authentication);
+
     }
 
     @Operation(
@@ -83,10 +94,13 @@ public class UserController {
             }
     )
     @GetMapping("/me")
-    public ResponseEntity<UserDTO> getUser() {
-        return ResponseEntity.ok().body(userService.getUser());
+    public ResponseEntity<UserDTO> getUser(Authentication authentication) {
+        if (authentication.getName() != null) {
+            return ResponseEntity.ok(userService.getLogUser(authentication));
+        }else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
-
 
     @Operation(
             tags = "Пользователи",
@@ -115,8 +129,14 @@ public class UserController {
             }
     )
     @PatchMapping("/me")
-    public ResponseEntity<UpdateUser> updateUser(@RequestBody UpdateUser updateUser) {
-        return ResponseEntity.ok().body(userService.updateUser(updateUser));
+    public ResponseEntity<UpdateUser> updateUser(@RequestBody UpdateUser updateUser,
+                                                 Authentication authentication) {
+        if (authentication.getName() != null) {
+            UpdateUser user = userService.updateUser(updateUser, authentication);
+            return ResponseEntity.status(HttpStatus.OK).body(user);
+        }else{
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
 
@@ -142,10 +162,13 @@ public class UserController {
             }
     )
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<byte[]> updateUserImage(@RequestParam MultipartFile image) {
-        return ResponseEntity.ok().body(userService.updateUserImage(image));
-
+    public ResponseEntity<Void> updateUserImage(@RequestParam MultipartFile image,
+                                                  Authentication authentication) throws IOException {
+        try {
+            userService.updateUserImage(image, authentication);
+            return ResponseEntity.ok().build();
+        } catch (HttpClientErrorException.Unauthorized e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
-
-
 }
