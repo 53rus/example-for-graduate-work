@@ -30,7 +30,7 @@ public class AdMapper {
     public static Ad mapCreateOrUpdateAdToAd(CreateOrUpdateAd adDTO) {
         Ad ad = new Ad();
         ad.setTitle(adDTO.getTitle());
-        ad.setPrice(ad.getPrice());
+        ad.setPrice(adDTO.getPrice());
         ad.setDescription(adDTO.getDescription());
         return ad;
     }
@@ -47,7 +47,7 @@ public class AdMapper {
         ExtendedAd adDTO = new ExtendedAd();
         adDTO.setPk(ad.getPk());
         adDTO.setAuthorFirstName(ad.getUser().getFirstName());
-        adDTO.setAuthorFirstName(ad.getUser().getLastName());
+        adDTO.setAuthorLastName(ad.getUser().getLastName());
         adDTO.setDescription(ad.getDescription());
         adDTO.setEmail(ad.getUser().getEmail());
         adDTO.setImage(ad.getImage());

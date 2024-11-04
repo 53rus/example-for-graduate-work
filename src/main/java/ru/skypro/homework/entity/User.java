@@ -2,6 +2,7 @@ package ru.skypro.homework.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 import ru.skypro.homework.dto.Role;
 
 import javax.persistence.*;
@@ -27,5 +28,6 @@ public class User {
     @Column(name = "user_avatar")
     private String image;
     @Lob
+    @Type(type = "org.hibernate.type.BinaryType")
     private byte[] data;
 }

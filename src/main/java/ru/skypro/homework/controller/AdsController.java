@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.service.AdsService;
 
+import javax.validation.Valid;
 import java.io.IOException;
 
 @Slf4j
@@ -74,12 +75,12 @@ public class AdsController {
                     )
             }
     )
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AdDTO> addAd(@RequestParam MultipartFile image,
-                                       @RequestParam CreateOrUpdateAd properties,
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AdDTO> addAd(@RequestPart("image") MultipartFile image,
+                                       @RequestPart("properties") @Valid CreateOrUpdateAd createOrUpdateAd,
                                        Authentication authentication) throws IOException {
         if (authentication.getName() != null) {
-            adsService.addAd(properties, image, authentication);
+            adsService.addAd(createOrUpdateAd, image, authentication);
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -113,7 +114,7 @@ public class AdsController {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<ExtendedAd> getAds(@PathVariable Integer id,
+    public ResponseEntity<ExtendedAd> getAds(@PathVariable ("id") Integer id,
                                              Authentication authentication) {
         if (authentication == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

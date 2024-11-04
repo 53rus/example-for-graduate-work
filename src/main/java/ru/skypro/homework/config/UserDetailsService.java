@@ -1,5 +1,6 @@
 package ru.skypro.homework.config;
 
+import ru.skypro.homework.dto.Register;
 import ru.skypro.homework.exception.InCorrectPasswordException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -30,6 +31,17 @@ public class UserDetailsService implements UserDetailsManager {
         user.setEmail(userDetails.getUsername());
         user.setPassword(userDetails.getPassword());
         user.setRole(Role.valueOf(userDetails.getAuthorities().iterator().next().getAuthority().substring(5)));
+        userRepository.save(user);
+    }
+
+    public void createUser(Register registerDto, String pass) {
+        User user = new User();
+        user.setPassword(pass);
+        user.setEmail(registerDto.getUsername());
+        user.setFirstName(registerDto.getFirstName());
+        user.setLastName(registerDto.getLastName());
+        user.setPhone(registerDto.getPhone());
+        user.setRole(registerDto.getRole());
         userRepository.save(user);
     }
 

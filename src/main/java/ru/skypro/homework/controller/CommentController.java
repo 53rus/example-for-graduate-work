@@ -126,7 +126,7 @@ public class CommentController {
             }
     )
     @DeleteMapping("/{adId}/comments/{commentId}")
-    public ResponseEntity<?> deleteComment(@PathVariable Integer adId,
+    public ResponseEntity<?> deleteComment(@PathVariable("adId") Integer adId,
                                            @PathVariable Integer commentId,
                                            Authentication authentication) {
         return ResponseEntity.status(commentService.deleteComment(adId, commentId, authentication)).build();

@@ -22,6 +22,7 @@ public class Ad {
     @Column(name = "ad_image")
     private String image;
     @Lob
+    @Type(type = "org.hibernate.type.BinaryType")
     private byte[] data;
 
     @ManyToOne

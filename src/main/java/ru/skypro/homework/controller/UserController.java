@@ -17,10 +17,9 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.UserDTO;
-import ru.skypro.homework.entity.User;
 import ru.skypro.homework.service.UserService;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.io.IOException;
 
 @Slf4j
@@ -66,8 +65,8 @@ public class UserController {
             }
     )
     @PostMapping("/set_password")
-    public ResponseEntity setPassword(@RequestBody NewPassword newPassword,
-                                                   Authentication authentication) {
+    public ResponseEntity<?> setPassword(@RequestBody @Valid NewPassword newPassword,
+                                      Authentication authentication) {
         log.info("New password : {}", newPassword);
         return userService.setPassword(newPassword, authentication);
 

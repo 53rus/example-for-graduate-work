@@ -64,10 +64,23 @@ public class AdsServiceImp implements AdsService {
 
         User user = userService.getUser(authentication.getName());
         Ad ad = AdMapper.mapCreateOrUpdateAdToAd(createOrUpdateAd);
+
         ad.setUser(user);
         ad.setData(image.getBytes());
         ad.setImage(image.getOriginalFilename());
+
         return AdMapper.mapAdToadDTO(adRepository.save(ad));
+
+//        Ad createAd = AdMapper.mapCreateOrUpdateAdToAd(createOrUpdateAd);
+//        User user = userRepository.findByEmail(authentication.getName()).get();
+//
+//        createAd.setImage(image.getOriginalFilename());
+//        createAd.setData(image.getBytes());
+//        createAd.setUser(user);
+//
+//        adRepository.save(createAd);
+//
+//        return AdMapper.mapAdToadDTO(createAd);
     }
 
     /**
